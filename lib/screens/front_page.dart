@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'onboarding_screen.dart';
+import 'dashboard_screen.dart';
+import 'signup_page.dart';
+
+
+
+
 
 class FrontPage extends StatelessWidget {
   const FrontPage({super.key});
@@ -67,7 +74,12 @@ class FrontPage extends StatelessWidget {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Navigate to Login Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
@@ -84,13 +96,19 @@ class FrontPage extends StatelessWidget {
 
               const SizedBox(height: 14),
 
+
               // 🔹 SIGN UP BUTTON (Outline)
               SizedBox(
                 width: 260,
                 height: 48,
                 child: OutlinedButton(
                   onPressed: () {
-                    // TODO: Navigate to Sign Up Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpPage(),
+                      ),
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.white),
@@ -145,6 +163,18 @@ class FrontPage extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OnboardingScreen(),
+                    ),
+                  );
+                },
+                child: const Text("Get Started"),
+              ),
+
             ],
           ),
         ),
