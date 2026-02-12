@@ -197,7 +197,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
 
       // 🔹 ✅ BOTTOM NAVIGATION BAR (ADDED HERE)
-      bottomNavigationBar: _buildBottomNavBar(),
+      // bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -271,59 +271,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // ================= BOTTOM NAV BAR =================
-  Widget _buildBottomNavBar() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 20,
-            color: Colors.black12,
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: [
-          _navItem(Icons.home, "Home", 0),
-          _navItem(Icons.assignment, "Decisions", 1),
-          _navItem(Icons.bar_chart, "Analytics", 2),
-          _navItem(Icons.person, "Profile", 3),
-        ],
-      ),
-    );
-  }
+  // Widget _buildBottomNavBar() {
+  //   return Container(
+  //     decoration: const BoxDecoration(
+  //       color: Colors.white,
+  //       boxShadow: [
+  //         BoxShadow(
+  //           blurRadius: 20,
+  //           color: Colors.black12,
+  //         ),
+  //       ],
+  //     ),
+  //     child: BottomNavigationBar(
+  //       currentIndex: _currentIndex,
+  //       onTap: (index) {
+  //         setState(() {
+  //           _currentIndex = index;
+  //         });
+  //       },
+  //       type: BottomNavigationBarType.fixed,
+  //       selectedItemColor: Colors.blue,
+  //       unselectedItemColor: Colors.grey,
+  //       items: [
+  //         _navItem(Icons.home, "Home", 0),
+  //         _navItem(Icons.assignment, "Decisions", 1),
+  //         _navItem(Icons.bar_chart, "Analytics", 2),
+  //         _navItem(Icons.person, "Profile", 3),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  // ================= NAV ITEM WITH GLOW =================
-  BottomNavigationBarItem _navItem(
-      IconData icon, String label, int index) {
-    bool isActive = _currentIndex == index;
+  // // ================= NAV ITEM WITH GLOW =================
+  // BottomNavigationBarItem _navItem(
+  //     IconData icon, String label, int index) {
+  //   bool isActive = _currentIndex == index;
 
-    return BottomNavigationBarItem(
-      icon: Icon(
-        icon,
-        size: 26,
-        color: isActive ? Colors.blue : Colors.grey,
-        shadows: isActive
-            ? [
-                Shadow(
-                  blurRadius: 12,
-                  color: Colors.blue.withOpacity(0.6),
-                )
-              ]
-            : [],
-      ),
-      label: label,
-    );
-  }
+  //   return BottomNavigationBarItem(
+  //     icon: Icon(
+  //       icon,
+  //       size: 26,
+  //       color: isActive ? Colors.blue : Colors.grey,
+  //       shadows: isActive
+  //           ? [
+  //               Shadow(
+  //                 blurRadius: 12,
+  //                 color: Colors.blue.withOpacity(0.6),
+  //               )
+  //             ]
+  //           : [],
+  //     ),
+  //     label: label,
+  //   );
+  // }
 
   // ================= SCORE COLOR =================
   Color _scoreColor(int score) {

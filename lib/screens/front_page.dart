@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackflow1/screens/main_screen.dart';
 import 'onboarding_screen.dart';
 import 'dashboard_screen.dart';
 import 'signup_page.dart';
@@ -77,7 +78,7 @@ class FrontPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const DashboardScreen(),
+                        builder: (context) => const MainScreen(),
                       ),
                     );
                   },
