@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; //
+import 'package:cloud_firestore/cloud_firestore.dart'; //
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -8,9 +10,57 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+
+  // Handle Signup Logic
+  Future<void> _handleSignUp() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // 1. Create user in Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        String uid = userCredential.user!.uid;
+
+        // 2. Store user details in Firestore 'users' collection
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': nameController.text.trim(),
+          'email': emailController.text.trim(),
+          'userid': uid,
+          'created_at': FieldValue.serverTimestamp(), //
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Account created successfully!")),
+          );
+          // Navigate to Dashboard or Home
+          // Navigator.pushReplacement(...)
+        }
+      } on FirebaseAuthException catch (e) {
+        // Handle Firebase specific errors
+        String message = "Registration failed";
+        if (e.code == 'weak-password') {
+          message = "The password provided is too weak.";
+        } else if (e.code == 'email-already-in-use') {
+          message = "The account already exists for that email.";
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +74,7 @@ class _SignUpPageState extends State<SignUpPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 15,
@@ -37,8 +87,6 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
-                  /// 🔵 LOGO
                   CircleAvatar(
                     radius: 56,
                     backgroundColor: Colors.transparent,
@@ -46,9 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       "assets/images/logo.png",
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   const Text(
                     "Create an Account",
                     style: TextStyle(
@@ -56,18 +102,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 24),
 
-                  /// FULL NAME
+                  /// FULL NAME field now uses controller
                   _inputField(
                     icon: Icons.person,
                     hint: "Full Name",
+                    controller: nameController,
+                    validator: (val) => val == null || val.isEmpty ? "Name is required" : null,
                   ),
 
                   const SizedBox(height: 16),
 
-                  /// ✅ EMAIL WITH VALIDATION
                   TextFormField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -76,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Email Address",
                       filled: true,
                       fillColor: Colors.grey.shade100,
-                      errorStyle: const TextStyle(fontSize: 24),
+                      errorStyle: const TextStyle(fontSize: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -86,9 +132,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (value == null || value.isEmpty) {
                         return "Email is required";
                       }
-                      if (!RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                         return "Enter a valid email address";
                       }
                       return null;
@@ -97,26 +141,22 @@ class _SignUpPageState extends State<SignUpPage> {
 
                   const SizedBox(height: 16),
 
-                  /// PASSWORD
+                  /// PASSWORD field now uses controller
                   _inputField(
                     icon: Icons.lock,
                     hint: "Password",
                     isPassword: true,
+                    controller: passwordController,
+                    validator: (val) => val != null && val.length < 6 ? "Password must be at least 6 characters" : null,
                   ),
 
                   const SizedBox(height: 24),
 
-                  /// SIGN UP BUTTON
                   SizedBox(
                     width: double.infinity,
                     height: 60,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // email format correct
-                          debugPrint(emailController.text);
-                        }
-                      },
+                      onPressed: _handleSignUp, // Calls the Firebase logic
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
@@ -131,40 +171,23 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
 
                   const SizedBox(height: 16),
-
-                  const Text(
-                    "Or sign up with",
-                    style: TextStyle(fontSize: 20),
-                  ),
-
+                  const Text("Or sign up with", style: TextStyle(fontSize: 20)),
                   const SizedBox(height: 12),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/google.png',
-                        height: 32,
-                        width: 32,
-                      ),
+                      Image.asset('assets/images/google.png', height: 32, width: 32),
                       const SizedBox(width: 26),
                       _socialButton(Icons.apple),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Already have an account? ",
-                        style: TextStyle(fontSize: 18),
-                      ),
+                      const Text("Already have an account? ", style: TextStyle(fontSize: 18)),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
+                        onTap: () => Navigator.pop(context),
                         child: const Text(
                           "Log In",
                           style: TextStyle(
@@ -185,13 +208,18 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  static Widget _inputField({
+  // Updated helper to use TextFormField and handle controllers
+  Widget _inputField({
     required IconData icon,
     required String hint,
+    required TextEditingController controller,
+    String? Function(String?)? validator,
     bool isPassword = false,
   }) {
-    return TextField(
+    return TextFormField(
+      controller: controller,
       obscureText: isPassword,
+      validator: validator,
       decoration: InputDecoration(
         prefixIcon: Icon(icon),
         hintText: hint,
@@ -205,7 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  static Widget _socialButton(IconData icon) {
+  Widget _socialButton(IconData icon) {
     return CircleAvatar(
       radius: 22,
       backgroundColor: Colors.grey.shade200,

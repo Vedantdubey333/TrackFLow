@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:provider/provider.dart';
 
+=======
+import 'package:firebase_core/firebase_core.dart';
+>>>>>>> 07dc16f09303f866d484008f2d0a1d1f77c23c10
 import 'screens/front_page.dart';
 import 'theme/theme_provider.dart';
 
+<<<<<<< HEAD
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -11,7 +16,18 @@ void main() {
       child: const MyApp(),
     ),
   );
+=======
+void main() async {
+  // Ensure Flutter bindings are initialized before Firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
+  runApp(const MyApp());
+>>>>>>> 07dc16f09303f866d484008f2d0a1d1f77c23c10
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
